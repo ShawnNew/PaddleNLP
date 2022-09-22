@@ -415,9 +415,9 @@ def do_train(args):
                 load_dict = paddle.load(params_path)
                 model_dict = model.state_dict()
                 if args.use_amp:
-                    for k, v in load_dict.items():
-                        if "layer_norm" not in model_dict[k].name:
-                            load_dict[k] = v.astype("float16")
+                   for k, v in load_dict.items():
+                       if "layer_norm" not in model_dict[k].name:
+                           load_dict[k] = v.astype("float16")
                 model.set_state_dict(load_dict)
                 opt_dict = paddle.load(opt_path)
                 optimizer.set_state_dict(opt_dict)
@@ -466,12 +466,14 @@ def do_train(args):
 
             with model.no_sync():
                 with paddle.amp.auto_cast(args.use_amp,
-                                          custom_black_list=[
-                                              "reduce_sum",
-                                              "c_softmax_with_cross_entropy",
-                                              "elementwise_div"
-                                          ],
-                                          level='O2'):
+                                        custom_black_list=[
+                                            "cast",
+                                            "square",
+                                            "reduce_sum",
+                                            "c_softmax_with_cross_entropy",
+                                            "elementwise_div"
+                                        ],
+                                        level='O2'):
 
                     # Create the model for the ernie pretrain
                     prediction_scores, seq_relationship_score = model(
@@ -482,9 +484,9 @@ def do_train(args):
                         masked_positions=masked_lm_positions)
 
                     lm_loss, sop_loss = criterion(prediction_scores,
-                                                  seq_relationship_score,
-                                                  masked_lm_labels,
-                                                  next_sentence_labels)
+                                                seq_relationship_score,
+                                                masked_lm_labels,
+                                                next_sentence_labels)
                     loss = lm_loss + sop_loss
 
                 if args.use_amp:

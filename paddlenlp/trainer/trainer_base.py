@@ -995,6 +995,7 @@ class Trainer:
         if self.args.fp16:
             ctx_manager = autocast(True,
                                    custom_black_list=[
+                                       "cast",
                                        "reduce_sum",
                                        "c_softmax_with_cross_entropy",
                                        "elementwise_div",

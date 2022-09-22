@@ -335,7 +335,7 @@ def do_train(args):
                                 args.seed + fleet.worker_index() + 2021)
 
     assert args.device in [
-        "cpu", "gpu", "xpu"
+        "cpu", "gpu", "xpu", "mlu"
     ], "Invalid device! Available device should be cpu, gpu, or xpu."
     place = paddle.set_device(args.device)
 
@@ -412,7 +412,7 @@ def do_train(args):
             data_world_size=topo.data_info.size,
             data_world_rank=topo.data_info.rank,
             max_seq_len=args.max_seq_len,
-            places=paddle.static.cuda_places(),
+            places=paddle.static.mlu_places(),
             data_holders=data_holders,
             current_step=global_step)
         fleet.init(is_collective=True)
